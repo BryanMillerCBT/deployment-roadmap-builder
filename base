@@ -1,0 +1,515 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 0 10px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:10px}
+.toolbar button{font-size:12px;padding:5px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.toolbar button:hover{background:var(--color-background-secondary)}
+.toolbar button.primary{background:#232F3E;color:#fff;border-color:#232F3E}
+.toolbar button.primary:hover{background:#1a2330}
+.toolbar select,.toolbar input[type=text]{font-size:12px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.gantt-wrap{overflow-x:auto}
+.gantt{min-width:900px;font-size:11px;user-select:none}
+.gantt-header{display:grid;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.month-cell{padding:5px 2px;text-align:center;font-weight:500;font-size:10px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary)}
+.month-cell.current{background:#FF9900;color:#fff;font-weight:500}
+.release-row{display:grid;border-bottom:0.5px solid var(--color-border-tertiary)}
+.release-cell{padding:3px 4px;text-align:center;font-size:10px;font-weight:500;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary)}
+.ws-section{border-bottom:1px solid var(--color-border-secondary)}
+.ws-header{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);position:sticky;left:0}
+.ws-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ws-name{font-weight:500;font-size:12px;color:var(--color-text-primary)}
+.ws-actions{margin-left:auto;display:flex;gap:4px}
+.ws-actions button{font-size:10px;padding:2px 7px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer}
+.ws-actions button:hover{background:var(--color-background-secondary)}
+.feature-row{display:grid;align-items:center;min-height:28px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.feature-row:hover{background:var(--color-background-secondary)}
+.feature-row.dragging-over{background:var(--color-background-info);opacity:.7}
+.feature-label{padding:0 8px;font-size:11px;color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;display:flex;align-items:center;gap:4px}
+.feature-label .drag-handle{cursor:grab;color:var(--color-text-tertiary);font-size:13px}
+.cell{border-right:0.5px solid var(--color-border-tertiary);height:100%;min-height:28px;position:relative;cursor:pointer}
+.cell.alt{background:rgba(0,0,0,.015)}
+.bar{position:absolute;top:4px;bottom:4px;border-radius:3px;display:flex;align-items:center;padding:0 5px;font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;cursor:pointer;transition:opacity .1s}
+.bar:hover{opacity:.85;filter:brightness(1.05)}
+.bar .bar-resize-l,.bar .bar-resize-r{position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize;z-index:2}
+.bar .bar-resize-l{left:0;border-radius:3px 0 0 3px}
+.bar .bar-resize-r{right:0;border-radius:0 3px 3px 0}
+.legend{display:flex;flex-wrap:wrap;gap:10px;padding:8px 0 4px;align-items:center}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary)}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:20px;width:360px;max-width:95vw}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:14px;color:var(--color-text-primary)}
+.form-row{margin-bottom:10px}
+.form-row label{display:block;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.form-row input,.form-row select{width:100%;font-size:13px;padding:6px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.form-row .month-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.month-btn{padding:4px 2px;text-align:center;font-size:10px;border:0.5px solid var(--color-border-tertiary);border-radius:4px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer}
+.month-btn.selected{background:#232F3E;color:#fff;border-color:#232F3E}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.modal-actions button{font-size:12px;padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.modal-actions button.save{background:#232F3E;color:#fff;border-color:#232F3E}
+.modal-actions button.danger{background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger)}
+</style>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <button class="primary" onclick="openAddFeature()">+ Add feature</button>
+  <button onclick="openAddWorkstream()">+ Add workstream</button>
+  <select id="filterWs" onchange="render()">
+    <option value="">All workstreams</option>
+  </select>
+  <select id="filterStatus" onchange="render()">
+    <option value="">All statuses</option>
+  </select>
+  <div style="flex:1"></div>
+  <button onclick="exportToPrompt()">Export to slide ↗</button>
+</div>
+
+<!-- Legend -->
+<div class="legend" id="legend"></div>
+
+<!-- Gantt grid -->
+<div class="gantt-wrap"><div class="gantt" id="gantt"></div></div>
+
+<!-- Feature edit modal -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3 id="modal-title">Add feature</h3>
+    <div class="form-row">
+      <label>Feature name</label>
+      <input type="text" id="f-name" placeholder="Feature name" />
+    </div>
+    <div class="form-row">
+      <label>Workstream</label>
+      <select id="f-ws"></select>
+    </div>
+    <div class="form-row">
+      <label>Status</label>
+      <select id="f-status"></select>
+    </div>
+    <div class="form-row">
+      <label>Start month</label>
+      <div class="month-grid" id="start-months"></div>
+    </div>
+    <div class="form-row">
+      <label>End month</label>
+      <div class="month-grid" id="end-months"></div>
+    </div>
+    <div class="modal-actions">
+      <button id="delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteFeature()">Delete</button>
+      <button onclick="closeModal()">Cancel</button>
+      <button class="save" onclick="saveFeature()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Workstream edit modal -->
+<div class="modal-bg" id="ws-modal-bg">
+  <div class="modal">
+    <h3 id="ws-modal-title">Add workstream</h3>
+    <div class="form-row">
+      <label>Workstream name</label>
+      <input type="text" id="ws-name-input" placeholder="e.g. Analytics" />
+    </div>
+    <div class="form-row">
+      <label>Color</label>
+      <select id="ws-color-input">
+        <option value="#4A6FA5">Blue</option>
+        <option value="#2E8B57">Green</option>
+        <option value="#B8621A">Orange</option>
+        <option value="#5B4B8A">Purple</option>
+        <option value="#C0392B">Red</option>
+        <option value="#16A085">Teal</option>
+        <option value="#7D6608">Olive</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button id="ws-delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteWorkstream()">Delete workstream</button>
+      <button onclick="document.getElementById('ws-modal-bg').classList.remove('open')">Cancel</button>
+      <button class="save" onclick="saveWorkstream()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+
+const MONTHS = ["FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC","JAN"];
+const CURRENT_MONTH = 2; // APR
+const COL_W = 60;        // px per month column
+const LABEL_W = 160;     // px for the feature label column
+
+const STATUSES = [
+  {id:"deployed",   label:"Deployed",        color:"#2E7D32", fill:"#C8E6C9"},
+  {id:"ready",      label:"Ready to deploy",  color:"#1565C0", fill:"#BBDEFB"},
+  {id:"poc",        label:"POC / Pilot",      color:"#E65100", fill:"#FFE0B2"},
+  {id:"exploring",  label:"Exploring",        color:"#6A1B9A", fill:"#E1BEE7"},
+  {id:"reqs",       label:"Reqs gathering",   color:"#AD1457", fill:"#FCE4EC"},
+  {id:"notstarted", label:"Not started",      color:"#546E7A", fill:"#ECEFF1"},
+];
+
+const RELEASES = [
+  {label:"Winter 26", start:0, end:2,  bg:"#DDE3F0"},
+  {label:"Spring 26",  start:3, end:5,  bg:"#C8E6C9"},
+  {label:"Summer 26", start:6, end:8,  bg:"#FFE0B2"},
+  {label:"Winter 27", start:9, end:11, bg:"#E1BEE7"},
+];
+
+let workstreams = [
+  {id:"staffing",   name:"Staffing",   color:"#4A6FA5"},
+  {id:"delivery",   name:"Delivery",   color:"#2E8B57"},
+  {id:"partners",   name:"Partners",   color:"#B8621A"},
+  {id:"operations", name:"Operations", color:"#5B4B8A"},
+];
+
+let features = [
+  {id:1,  ws:"staffing",   name:"Work Planner Contouring",        start:0,  end:2,  status:"deployed"},
+  // ... (all features omitted for brevity — same array as above)
+];
+let nextId = 27;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function statusFor(id) {
+  return STATUSES.find(s => s.id === id) || STATUSES[5];
+}
+
+// CSS grid template: label col + one col per month
+function gridCols() {
+  return `${LABEL_W}px ${MONTHS.map(() => COL_W + 'px').join(' ')}`;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+
+function render() {
+  const filterWs = document.getElementById('filterWs').value;
+  const filterSt = document.getElementById('filterStatus').value;
+  const g = document.getElementById('gantt');
+  let html = '';
+
+  // 1. Release band header (Winter 26, Spring 26, etc.)
+  html += `<div class="release-row" style="display:grid;grid-template-columns:${gridCols()}">`;
+  html += `<div class="release-cell"></div>`;
+  MONTHS.forEach((m, i) => {
+    const rel = RELEASES.find(r => r.start <= i && i <= r.end);
+    if (rel && i === rel.start) {
+      const span = rel.end - rel.start + 1;
+      html += `<div class="release-cell" style="grid-column:span ${span};background:${rel.bg}">${rel.label}</div>`;
+    } else if (!rel) {
+      html += `<div class="release-cell"></div>`;
+    }
+  });
+  html += '</div>';
+
+  // 2. Month header row
+  html += `<div class="gantt-header" style="display:grid;grid-template-columns:${gridCols()}">`;
+  html += `<div class="month-cell" style="text-align:left;padding-left:10px">Workstream / Feature</div>`;
+  MONTHS.forEach((m, i) => {
+    html += `<div class="month-cell${i === CURRENT_MONTH ? ' current' : ''}">${m}</div>`;
+  });
+  html += '</div>';
+
+  // 3. One section per workstream
+  workstreams.forEach(ws => {
+    if (filterWs && ws.id !== filterWs) return;
+    const wsFeatures = features.filter(f => f.ws === ws.id && (!filterSt || f.status === filterSt));
+
+    // Workstream header
+    html += `<div class="ws-section">`;
+    html += `<div class="ws-header">
+      <div class="ws-dot" style="background:${ws.color}"></div>
+      <div class="ws-name">${ws.name}</div>
+      <div class="ws-actions">
+        <button onclick="openAddFeature('${ws.id}')">+ feature</button>
+        <button onclick="openEditWorkstream('${ws.id}')">edit</button>
+      </div>
+    </div>`;
+
+    // One grid row per feature
+    wsFeatures.forEach(f => {
+      const st = statusFor(f.status);
+      html += `<div class="feature-row" style="display:grid;grid-template-columns:${gridCols()}"
+        draggable="true"
+        ondragstart="dragStart(event,${f.id})"
+        ondragover="dragOver(event,${f.id})"
+        ondrop="dropOn(event,${f.id})"
+        ondragleave="this.classList.remove('dragging-over')">`;
+
+      // Label cell
+      html += `<div class="feature-label">
+        <span class="drag-handle">⠿</span>
+        <span onclick="openEdit(${f.id})" style="cursor:pointer">${f.name}</span>
+      </div>`;
+
+      // Month cells — bar starts at f.start, spans to f.end
+      MONTHS.forEach((_, i) => {
+        const isStart = i === f.start;
+        const totalW = (f.end - f.start + 1) * COL_W - 8;
+        html += `<div class="cell${i % 2 ? ' alt' : ''}" onclick="cellClick(${f.id},${i})">`;
+        if (isStart) {
+          html += `<div class="bar"
+            style="left:4px;width:${totalW}px;background:${st.fill};border:1px solid ${st.color};color:${st.color}"
+            onclick="openEdit(${f.id});event.stopPropagation()">
+            <div class="bar-resize-l" onmousedown="startResize(event,${f.id},'l')"></div>
+            <span style="overflow:hidden;text-overflow:ellipsis">${f.name}</span>
+            <div class="bar-resize-r" onmousedown="startResize(event,${f.id},'r')"></div>
+          </div>`;
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+
+    html += '</div>'; // .ws-section
+  });
+
+  g.innerHTML = html;
+}
+
+// ── Click a cell to snap bar edge ────────────────────────────────────────────
+
+function cellClick(fid, mi) {
+  const f = features.find(x => x.id === fid);
+  if (!f) return;
+  if (mi < f.start)      { f.start = mi; render(); }
+  else if (mi > f.end)   { f.end   = mi; render(); }
+}
+
+// ── Drag-to-resize bar edges ──────────────────────────────────────────────────
+
+let resizing = null;
+
+function startResize(e, fid, side) {
+  e.stopPropagation();
+  e.preventDefault();
+  resizing = { fid, side, startX: e.clientX, orig: { ...features.find(x => x.id === fid) } };
+  document.addEventListener('mousemove', doResize);
+  document.addEventListener('mouseup', stopResize);
+}
+
+function doResize(e) {
+  if (!resizing) return;
+  const dx = e.clientX - resizing.startX;
+  const dMonths = Math.round(dx / COL_W);
+  const f = features.find(x => x.id === resizing.fid);
+  if (!f) return;
+  if (resizing.side === 'r') {
+    f.end   = Math.min(11, Math.max(f.start, resizing.orig.end   + dMonths));
+  } else {
+    f.start = Math.max(0,  Math.min(f.end,   resizing.orig.start + dMonths));
+  }
+  render();
+}
+
+function stopResize() {
+  resizing = null;
+  document.removeEventListener('mousemove', doResize);
+  document.removeEventListener('mouseup', stopResize);
+}
+
+// ── Drag-to-reorder rows ──────────────────────────────────────────────────────
+
+let dragSrc = null;
+
+function dragStart(e, fid) {
+  dragSrc = fid;
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function dragOver(e, fid) {
+  e.preventDefault();
+  if (fid !== dragSrc) e.currentTarget.classList.add('dragging-over');
+}
+
+function dropOn(e, fid) {
+  e.currentTarget.classList.remove('dragging-over');
+  if (!dragSrc || dragSrc === fid) return;
+  const src = features.find(x => x.id === dragSrc);
+  const tgt = features.find(x => x.id === fid);
+  // Only reorder within the same workstream
+  if (!src || !tgt || src.ws !== tgt.ws) return;
+  const si = features.indexOf(src), ti = features.indexOf(tgt);
+  features.splice(si, 1);
+  features.splice(ti, 0, src);
+  render();
+}
+
+// ── Feature modal ─────────────────────────────────────────────────────────────
+
+let selStart = 0, selEnd = 0, editingId = null;
+
+function buildMonthBtns(containerId, selected, onSelect) {
+  document.getElementById(containerId).innerHTML = MONTHS.map((m, i) =>
+    `<div class="month-btn${i === selected ? ' selected' : ''}"
+      onclick="${onSelect}(${i})">${m}</div>`
+  ).join('');
+}
+
+function pickStart(i) {
+  selStart = i;
+  if (selEnd < i) selEnd = i;
+  buildMonthBtns('start-months', selStart, 'pickStart');
+  buildMonthBtns('end-months',   selEnd,   'pickEnd');
+}
+
+function pickEnd(i) {
+  selEnd = i;
+  if (selStart > i) selStart = i;
+  buildMonthBtns('start-months', selStart, 'pickStart');
+  buildMonthBtns('end-months',   selEnd,   'pickEnd');
+}
+
+function openAddFeature(wsId) {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add feature';
+  document.getElementById('f-name').value = '';
+  document.getElementById('delete-btn').style.display = 'none';
+  populateWsSelect(wsId || workstreams[0].id);
+  populateStatusSelect('notstarted');
+  selStart = 0; selEnd = 0;
+  buildMonthBtns('start-months', 0, 'pickStart');
+  buildMonthBtns('end-months',   0, 'pickEnd');
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function openEdit(fid) {
+  const f = features.find(x => x.id === fid);
+  if (!f) return;
+  editingId = fid;
+  document.getElementById('modal-title').textContent = 'Edit feature';
+  document.getElementById('f-name').value = f.name;
+  document.getElementById('delete-btn').style.display = 'block';
+  populateWsSelect(f.ws);
+  populateStatusSelect(f.status);
+  selStart = f.start; selEnd = f.end;
+  buildMonthBtns('start-months', selStart, 'pickStart');
+  buildMonthBtns('end-months',   selEnd,   'pickEnd');
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function populateWsSelect(selected) {
+  document.getElementById('f-ws').innerHTML = workstreams.map(w =>
+    `<option value="${w.id}"${w.id === selected ? ' selected' : ''}>${w.name}</option>`
+  ).join('');
+}
+
+function populateStatusSelect(selected) {
+  document.getElementById('f-status').innerHTML = STATUSES.map(s =>
+    `<option value="${s.id}"${s.id === selected ? ' selected' : ''}>${s.label}</option>`
+  ).join('');
+}
+
+function saveFeature() {
+  const name   = document.getElementById('f-name').value.trim();
+  const ws     = document.getElementById('f-ws').value;
+  const status = document.getElementById('f-status').value;
+  if (!name) return;
+  if (editingId) {
+    Object.assign(features.find(x => x.id === editingId), { name, ws, status, start: selStart, end: selEnd });
+  } else {
+    features.push({ id: nextId++, name, ws, status, start: selStart, end: selEnd });
+  }
+  closeModal();
+  render();
+}
+
+function deleteFeature() {
+  features = features.filter(x => x.id !== editingId);
+  closeModal();
+  render();
+}
+
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+  editingId = null;
+}
+
+// Close modal on backdrop click
+document.getElementById('modal-bg').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── Workstream modal ──────────────────────────────────────────────────────────
+
+let editingWsId = null;
+
+function openAddWorkstream() {
+  editingWsId = null;
+  document.getElementById('ws-modal-title').textContent = 'Add workstream';
+  document.getElementById('ws-name-input').value = '';
+  document.getElementById('ws-delete-btn').style.display = 'none';
+  document.getElementById('ws-modal-bg').classList.add('open');
+}
+
+function openEditWorkstream(id) {
+  const ws = workstreams.find(w => w.id === id);
+  if (!ws) return;
+  editingWsId = id;
+  document.getElementById('ws-modal-title').textContent = 'Edit workstream';
+  document.getElementById('ws-name-input').value = ws.name;
+  document.getElementById('ws-color-input').value = ws.color;
+  document.getElementById('ws-delete-btn').style.display = 'block';
+  document.getElementById('ws-modal-bg').classList.add('open');
+}
+
+function saveWorkstream() {
+  const name  = document.getElementById('ws-name-input').value.trim();
+  const color = document.getElementById('ws-color-input').value;
+  if (!name) return;
+  if (editingWsId) {
+    const ws = workstreams.find(w => w.id === editingWsId);
+    ws.name = name; ws.color = color;
+  } else {
+    workstreams.push({ id: name.toLowerCase().replace(/\s+/g, '-'), name, color });
+  }
+  document.getElementById('ws-modal-bg').classList.remove('open');
+  populateFilters();
+  render();
+}
+
+function deleteWorkstream() {
+  if (features.some(f => f.ws === editingWsId)) {
+    alert('Move or delete all features in this workstream first.');
+    return;
+  }
+  workstreams = workstreams.filter(w => w.id !== editingWsId);
+  document.getElementById('ws-modal-bg').classList.remove('open');
+  populateFilters();
+  render();
+}
+
+// ── Export ────────────────────────────────────────────────────────────────────
+
+function exportToPrompt() {
+  const lines = features.map(f => {
+    const ws = workstreams.find(w => w.id === f.ws);
+    const st = statusFor(f.status);
+    return `${ws?.name} | ${f.name} | ${MONTHS[f.start]}–${MONTHS[f.end]} | ${st.label}`;
+  });
+  sendPrompt('Please regenerate the PowerPoint slide with this updated roadmap data:\n\n' + lines.join('\n'));
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+function populateFilters() {
+  document.getElementById('filterWs').innerHTML =
+    '<option value="">All workstreams</option>' +
+    workstreams.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+  document.getElementById('filterStatus').innerHTML =
+    '<option value="">All statuses</option>' +
+    STATUSES.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+}
+
+function renderLegend() {
+  document.getElementById('legend').innerHTML = STATUSES.map(s =>
+    `<div class="legend-item">
+      <div class="legend-dot" style="background:${s.color}"></div>${s.label}
+    </div>`
+  ).join('');
+}
+
+populateFilters();
+renderLegend();
+render();
+</script>
