@@ -4,28 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deployment Roadmap Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body data-theme="gradient">
 
   <!-- Auth bar (visible only when Supabase is configured) -->
   <div class="auth-bar" id="auth-bar"></div>
 
-  <!-- Roadmap selector row -->
-  <div class="roadmap-bar" id="roadmap-bar">
-    <label for="roadmap-name">Roadmap:</label>
+  <!-- Top bar -->
+  <div class="top-bar" id="roadmap-bar">
+    <img id="top-bar-logo" src="/deployment-roadmap-builder/logo-black.svg" alt="Certinia" class="top-bar-logo" />
+    <div class="top-bar-divider"></div>
     <input type="text" id="roadmap-name" class="roadmap-name-input" placeholder="Customer / roadmap name" />
     <select id="roadmap-select" onchange="handleRoadmapSelect(event)" style="display:none">
       <option value="">— New roadmap —</option>
     </select>
-    <button id="save-btn" onclick="saveRoadmap()" class="primary" style="font-size:12px;padding:4px 12px">Save</button>
-    <span id="save-status" style="font-size:11px;display:none"></span>
-    <button onclick="newRoadmap()" style="font-size:12px;padding:4px 12px">New</button>
-    <div style="flex:1"></div>
-    <button onclick="exportStateAsJson()" title="Export roadmap as JSON for sharing">⬇ Export JSON</button>
-    <label style="cursor:pointer;font-size:12px;padding:5px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)">
+    <div class="top-bar-spacer"></div>
+    <span id="save-status" style="display:none"></span>
+    <button onclick="exportStateAsJson()" class="btn-ghost">⬇ Export JSON</button>
+    <label class="btn-ghost" style="cursor:pointer">
       ⬆ Import JSON
       <input type="file" accept=".json" onchange="handleJsonImport(event)" style="display:none" />
     </label>
+    <button onclick="newRoadmap()">New</button>
+    <button id="save-btn" onclick="saveRoadmap()" class="primary">Save</button>
   </div>
 
   <!-- Main toolbar -->
