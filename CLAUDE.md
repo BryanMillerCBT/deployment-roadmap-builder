@@ -47,10 +47,11 @@ Month indices are 0–11 (FEB=0 … JAN=11). Feature `start`/`end` fields are mo
 ### Supabase (`src/auth.js`)
 
 Supabase is **optional** — the app runs fully offline using `localStorage` when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are absent. When configured:
-- Auth: magic link (OTP) via `supabase.auth.signInWithOtp`
+- Auth: magic link (OTP) via `supabase.auth.signInWithOtp`; session is verified server-side via `supabase.auth.getUser()` (not `getSession()`)
 - Table: `roadmaps` — workstreams and features stored as JSONB columns
+- RLS: four per-operation policies scoped to `created_by = auth.uid()`; users can only read/write their own roadmaps
 - Realtime: subscribed per roadmap UUID via `subscribeRealtime(id)`; live updates overwrite local state and re-render
-- Schema: `supabase/schema.sql` — run once in the Supabase SQL editor; also enable Realtime on the `roadmaps` table in the dashboard
+- Schema: `supabase/schema.sql` — already applied to the dev project via MCP migration; run manually in the SQL editor for new environments. Also enable Realtime on the `roadmaps` table in the Supabase dashboard (Table Editor → roadmaps → Realtime → Enable) — this cannot be done via SQL.
 
 ### Export
 
