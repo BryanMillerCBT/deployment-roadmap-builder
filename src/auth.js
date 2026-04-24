@@ -3,6 +3,7 @@ import { state, persistState } from './state.js';
 import { render } from './render.js';
 import { populateFilters } from './filters.js';
 import { openSignInModal, closeSignInModal, closeNewRoadmapModal } from './modals.js';
+import { setReleases } from './config.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -10,6 +11,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export let supabase = null;
 let currentUser = null;
 let realtimeChannel = null;
+let releasesChannel = null;
 
 export function isConfigured() {
   return !!(SUPABASE_URL && SUPABASE_KEY);
@@ -35,6 +37,29 @@ export async function initAuth() {
   });
 
   if (currentUser) await loadRoadmapList();
+
+  await loadReleases();
+  subscribeReleasesRealtime();
+}
+
+async function loadReleases() {
+  if (!supabase) return;
+  const { data, error } = await supabase
+    .from('releases')
+    .select('label, start_month, end_month, bg')
+    .order('sort_order');
+  if (error || !data?.length) return;
+  setReleases(data.map(r => ({ label: r.label, start: r.start_month, end: r.end_month, bg: r.bg })));
+  render();
+}
+
+function subscribeReleasesRealtime() {
+  if (!supabase) return;
+  if (releasesChannel) supabase.removeChannel(releasesChannel);
+  releasesChannel = supabase
+    .channel('releases')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'releases' }, loadReleases)
+    .subscribe();
 }
 
 function updateAuthBar() {
