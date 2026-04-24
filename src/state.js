@@ -1,6 +1,7 @@
 const LOCAL_KEY = 'roadmap_local_data';
 
 export const state = {
+  ganttStartDate: '2026-02-01',
   workstreams: [
     { id: "staffing",   name: "Staffing",   color: "#4A6FA5" },
     { id: "delivery",   name: "Delivery",   color: "#2E8B57" },
@@ -25,9 +26,10 @@ export function initState() {
     const raw = localStorage.getItem(LOCAL_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
-      if (saved.workstreams)       state.workstreams       = saved.workstreams;
-      if (saved.features)          state.features          = saved.features;
-      if (saved.nextId)            state.nextId            = saved.nextId;
+      if (saved.ganttStartDate)     state.ganttStartDate     = saved.ganttStartDate;
+      if (saved.workstreams)        state.workstreams        = saved.workstreams;
+      if (saved.features)           state.features           = saved.features;
+      if (saved.nextId)             state.nextId             = saved.nextId;
       if (saved.currentRoadmapName) state.currentRoadmapName = saved.currentRoadmapName;
     }
   } catch (_) {}
@@ -35,6 +37,7 @@ export function initState() {
 
 export function persistState() {
   localStorage.setItem(LOCAL_KEY, JSON.stringify({
+    ganttStartDate:    state.ganttStartDate,
     workstreams:       state.workstreams,
     features:          state.features,
     nextId:            state.nextId,

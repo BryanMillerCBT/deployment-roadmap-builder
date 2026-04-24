@@ -16,8 +16,11 @@ import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
 import {
   initWizard, shouldShowWizard, openWizard,
-  wizardNext, wizardBack, wizardSkip, wizardAddWorkstream, wizardRemoveWorkstream,
+  wizardNext, wizardBack, wizardSkip,
+  wizardAddWorkstream, wizardRemoveWorkstream,
+  wizardAddFeature, wizardRemoveFeature,
 } from './wizard.js';
+import { refreshConfigFromStartDate } from './config.js';
 import {
   initAuth, isConfigured, showSignIn, signOut, submitSignIn,
   loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
@@ -32,7 +35,9 @@ Object.assign(window, {
   showSignIn, signOut, submitSignIn, openSignInModal, closeSignInModal,
   openNewRoadmapModal, closeNewRoadmapModal,
   saveRoadmap, newRoadmap, confirmNewRoadmap,
-  openWizard, wizardNext, wizardBack, wizardSkip, wizardAddWorkstream, wizardRemoveWorkstream,
+  openWizard, wizardNext, wizardBack, wizardSkip,
+  wizardAddWorkstream, wizardRemoveWorkstream,
+  wizardAddFeature, wizardRemoveFeature,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;
     if (id) {
@@ -54,6 +59,7 @@ Object.assign(window, {
 async function init() {
   await initConfig();
   initState();
+  if (state.ganttStartDate) refreshConfigFromStartDate(state.ganttStartDate);
   await initAuth();
   initModals();
   initWizard();
