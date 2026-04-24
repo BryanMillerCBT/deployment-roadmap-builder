@@ -21,6 +21,26 @@ import {
   wizardAddFeature, wizardRemoveFeature,
 } from './wizard.js';
 import { refreshConfigFromStartDate } from './config.js';
+
+const THEME_KEY = 'roadmap_theme';
+const THEMES    = ['gradient', 'gradient-dark'];
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const logo = document.getElementById('top-bar-logo');
+  if (logo) logo.src = (import.meta.env.BASE_URL || '/') + (theme === 'gradient-dark' ? 'logo-white.svg' : 'logo-black.svg');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = theme === 'gradient-dark' ? '☽' : '☀︎';
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'gradient';
+  const next    = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
+  applyTheme(next);
+}
+
+Object.assign(window, { toggleTheme });
 import {
   initAuth, isConfigured, showSignIn, signOut, submitSignIn,
   loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
@@ -57,6 +77,7 @@ Object.assign(window, {
 });
 
 async function init() {
+  applyTheme(localStorage.getItem(THEME_KEY) || 'gradient');
   await initConfig();
   initState();
   if (state.ganttStartDate) refreshConfigFromStartDate(state.ganttStartDate);
