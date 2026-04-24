@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { state, persistState } from './state.js';
 import { render } from './render.js';
 import { populateFilters } from './filters.js';
+import { openSignInModal, closeSignInModal } from './modals.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -52,12 +53,31 @@ function updateAuthBar() {
   }
 }
 
-export async function showSignIn() {
-  const email = prompt('Enter your email address to receive a sign-in link:');
+export function showSignIn() {
+  openSignInModal();
+}
+
+export async function submitSignIn() {
+  const email = document.getElementById('signin-email')?.value?.trim();
+  const msgEl = document.getElementById('signin-message');
+  const btnEl = document.getElementById('signin-submit-btn');
   if (!email || !supabase) return;
+
+  btnEl.disabled = true;
+  msgEl.style.display = 'none';
+
   const { error } = await supabase.auth.signInWithOtp({ email });
-  if (error) alert(`Sign in failed: ${error.message}`);
-  else alert(`Check your email (${email}) for a sign-in link.`);
+
+  if (error) {
+    msgEl.textContent = `Error: ${error.message}`;
+    msgEl.style.cssText = 'display:block;font-size:12px;padding:8px;border-radius:var(--border-radius-md);margin-bottom:10px;background:var(--color-background-danger);color:var(--color-text-danger)';
+    btnEl.disabled = false;
+  } else {
+    msgEl.textContent = `Check your inbox — a sign-in link has been sent to ${email}.`;
+    msgEl.style.cssText = 'display:block;font-size:12px;padding:8px;border-radius:var(--border-radius-md);margin-bottom:10px;background:#e8f5e9;color:#2E7D32';
+    btnEl.disabled = true;
+    setTimeout(closeSignInModal, 4000);
+  }
 }
 
 export async function signOut() {

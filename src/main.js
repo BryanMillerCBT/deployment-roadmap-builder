@@ -6,7 +6,7 @@ import { populateFilters, renderLegend } from './filters.js';
 import {
   initModals, openAddFeature, openEdit, openAddWorkstream, openEditWorkstream,
   saveFeature, deleteFeature, closeModal, saveWorkstream, deleteWorkstream,
-  pickStart, pickEnd,
+  pickStart, pickEnd, openSignInModal, closeSignInModal,
 } from './modals.js';
 import {
   startResize, doResize, stopResize,
@@ -15,7 +15,7 @@ import {
 import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
 import {
-  initAuth, isConfigured, showSignIn, signOut,
+  initAuth, isConfigured, showSignIn, signOut, submitSignIn,
   loadRoadmap, saveRoadmap, newRoadmap, subscribeRealtime,
 } from './auth.js';
 
@@ -26,7 +26,8 @@ Object.assign(window, {
   pickStart, pickEnd, startResize, doResize, stopResize,
   dragStart, dragOver, dragEnter, dragLeave, dragEnd, dropOn, cellClick,
   exportToPptx, exportToGoogleSlides, exportStateAsJson,
-  showSignIn, signOut, saveRoadmap, newRoadmap,
+  showSignIn, signOut, submitSignIn, openSignInModal, closeSignInModal,
+  saveRoadmap, newRoadmap,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;
     if (id) {

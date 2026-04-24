@@ -33,7 +33,7 @@ export function openAddFeature(wsId) {
   document.getElementById('f-name').value = '';
   document.getElementById('delete-btn').style.display = 'none';
   populateWsSelect(wsId || state.workstreams[0]?.id || '');
-  populateStatusSelect('notstarted');
+  populateStatusSelect('not-started');
   selStart = 0; selEnd = 0;
   buildMonthBtns('start-months', 0, 'pickStart');
   buildMonthBtns('end-months',   0, 'pickEnd');
@@ -142,11 +142,31 @@ export function deleteWorkstream() {
   persistState();
 }
 
+export function openSignInModal() {
+  document.getElementById('signin-email').value = '';
+  const msg = document.getElementById('signin-message');
+  msg.style.display = 'none';
+  msg.textContent = '';
+  document.getElementById('signin-submit-btn').disabled = false;
+  document.getElementById('signin-modal-bg').classList.add('open');
+  setTimeout(() => document.getElementById('signin-email').focus(), 50);
+}
+
+export function closeSignInModal() {
+  document.getElementById('signin-modal-bg').classList.remove('open');
+}
+
 export function initModals() {
   document.getElementById('modal-bg').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
   document.getElementById('ws-modal-bg').addEventListener('click', function(e) {
     if (e.target === this) document.getElementById('ws-modal-bg').classList.remove('open');
+  });
+  document.getElementById('signin-modal-bg').addEventListener('click', function(e) {
+    if (e.target === this) closeSignInModal();
+  });
+  document.getElementById('signin-email').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') window.submitSignIn();
   });
 }
