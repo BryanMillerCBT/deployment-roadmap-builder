@@ -101,6 +101,22 @@
     </div>
   </div>
 
+  <!-- Setup wizard -->
+  <div class="modal-bg" id="wizard-modal-bg">
+    <div class="modal" style="width:420px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h3 id="wizard-title" style="margin:0">Welcome</h3>
+        <span id="wizard-step-indicator" style="font-size:11px;color:var(--color-text-tertiary)">Step 1 of 3</span>
+      </div>
+      <div id="wizard-content"></div>
+      <div class="modal-actions" style="margin-top:18px">
+        <button onclick="wizardSkip()" style="margin-right:auto;color:var(--color-text-tertiary);border-color:transparent;background:transparent">Skip</button>
+        <button id="wizard-back-btn" style="display:none" onclick="wizardBack()">← Back</button>
+        <button class="save" id="wizard-next-btn" onclick="wizardNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+
   <!-- New Roadmap confirmation modal -->
   <div class="modal-bg" id="new-roadmap-modal-bg">
     <div class="modal" style="width:320px">
