@@ -28,6 +28,8 @@ const THEME_KEY   = 'roadmap_theme';
 const THEMES      = ['gradient', 'gradient-dark'];
 const DENSITY_KEY = 'roadmap_density';
 
+let _appReady = false;
+
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem(THEME_KEY, theme);
@@ -35,6 +37,7 @@ function applyTheme(theme) {
   if (logo) logo.src = (import.meta.env.BASE_URL || '/') + (theme === 'gradient-dark' ? 'logo-white.svg' : 'logo-black.svg');
   const btn = document.getElementById('theme-toggle-btn');
   if (btn) btn.textContent = theme === 'gradient-dark' ? '☽' : '☀︎';
+  if (_appReady) { renderLegend(); render(); }
 }
 
 function toggleTheme() {
@@ -108,6 +111,7 @@ async function init() {
   renderLegend();
   render();
   applyDensity(localStorage.getItem(DENSITY_KEY) || 'comfortable');
+  _appReady = true;
   if (shouldShowWizard()) openWizard();
 
   // Wire up roadmap name input

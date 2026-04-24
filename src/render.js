@@ -6,6 +6,13 @@ export function statusFor(id) {
   return cfg.statuses.find(s => s.id === id) || cfg.statuses[cfg.statuses.length - 1];
 }
 
+export function isDark() {
+  return document.documentElement.getAttribute('data-theme') === 'gradient-dark';
+}
+
+function barFill(st)  { return isDark() ? (st.darkFill  || st.fill)  : st.fill; }
+function barColor(st) { return isDark() ? (st.darkColor || st.color) : st.color; }
+
 function gridCols() {
   const cfg = getConfig();
   return `var(--label-w) ${cfg.months.map(() => cfg.colWidth + 'px').join(' ')}`;
@@ -75,9 +82,14 @@ function renderStatsBar() {
   const statusCounts = {};
   state.features.forEach(f => { statusCounts[f.status] = (statusCounts[f.status] || 0) + 1; });
 
+  const dark = isDark();
   const pills = cfg.statuses
     .filter(s => statusCounts[s.id])
-    .map(s => `<span class="stats-pill" style="background:${s.fill};color:${s.color}">${s.label} <b>${statusCounts[s.id]}</b></span>`)
+    .map(s => {
+      const bg  = dark ? (s.darkFill  || s.fill)  : s.fill;
+      const clr = dark ? (s.darkColor || s.color) : s.color;
+      return `<span class="stats-pill" style="background:${bg};color:${clr}">${s.label} <b>${statusCounts[s.id]}</b></span>`;
+    })
     .join('');
 
   el.innerHTML = `
@@ -158,7 +170,7 @@ export function render() {
           if (isStart) {
             const grips = `<span class="grip-dot"></span><span class="grip-dot"></span><span class="grip-dot"></span>`;
             html += `<div class="bar"
-              style="left:4px;width:${totalW}px;background:${st.fill};color:${st.color}"
+              style="left:4px;width:${totalW}px;background:${barFill(st)};color:${barColor(st)}"
               onmousedown="startBarDrag(event,${f.id})">
               <div class="bar-resize-l" onmousedown="startResize(event,${f.id},'l')">${grips}</div>
               <span style="flex:1;overflow:hidden;text-overflow:ellipsis;pointer-events:none;padding:0 2px">${f.name}</span>
