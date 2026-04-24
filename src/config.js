@@ -43,3 +43,16 @@ export function setReleases(arr) {
   const cfg = _config || DEFAULT_CONFIG;
   cfg.releases = arr;
 }
+
+const MONTH_ABBR = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+export function refreshConfigFromStartDate(dateStr) {
+  if (!dateStr) return;
+  const start = new Date(dateStr + 'T00:00:00');
+  const cfg   = _config || DEFAULT_CONFIG;
+  cfg.ganttStartDate = dateStr;
+  cfg.months = Array.from({ length: 12 }, (_, i) => MONTH_ABBR[(start.getMonth() + i) % 12]);
+  const now  = new Date();
+  const diff = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+  cfg.currentMonth = Math.max(0, Math.min(11, diff));
+}
