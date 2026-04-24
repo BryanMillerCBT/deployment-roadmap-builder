@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deployment Roadmap Builder</title>
-  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-BTJtX22Q.js"></script>
+  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-ChW4_BGP.js"></script>
   <link rel="stylesheet" crossorigin href="/deployment-roadmap-builder/assets/index-YOzuhTeR.css">
 </head>
 <body>
@@ -106,6 +106,25 @@
         <button id="ws-delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteWorkstream()">Delete workstream</button>
         <button onclick="document.getElementById('ws-modal-bg').classList.remove('open')">Cancel</button>
         <button class="save" onclick="saveWorkstream()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign-in modal -->
+  <div class="modal-bg" id="signin-modal-bg">
+    <div class="modal">
+      <h3>Sign in</h3>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px">
+        Enter your email address to receive a sign-in link.
+      </p>
+      <div class="form-row">
+        <label>Email address</label>
+        <input type="email" id="signin-email" placeholder="you@example.com" />
+      </div>
+      <div id="signin-message" style="display:none;font-size:12px;padding:8px;border-radius:var(--border-radius-md);margin-bottom:10px"></div>
+      <div class="modal-actions">
+        <button onclick="closeSignInModal()">Cancel</button>
+        <button class="save" id="signin-submit-btn" onclick="submitSignIn()">Send link</button>
       </div>
     </div>
   </div>
