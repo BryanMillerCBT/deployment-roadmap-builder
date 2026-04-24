@@ -8,7 +8,7 @@ export function statusFor(id) {
 
 function gridCols() {
   const cfg = getConfig();
-  return `${cfg.labelWidth}px ${cfg.months.map(() => cfg.colWidth + 'px').join(' ')}`;
+  return `var(--label-w) ${cfg.months.map(() => cfg.colWidth + 'px').join(' ')}`;
 }
 
 const _collapsed = new Set();
@@ -118,7 +118,7 @@ export function render() {
 
   // Month header row
   html += `<div class="gantt-header" style="display:grid;grid-template-columns:${gridCols()}">`;
-  html += `<div class="month-cell" style="text-align:left;padding-left:10px">Workstream / Feature</div>`;
+  html += `<div class="month-cell label-col-header" style="text-align:left;padding-left:10px">Workstream / Feature<div class="label-col-resizer" onmousedown="startLabelResize(event)"></div></div>`;
   cfg.months.forEach((m, i) => {
     html += `<div class="month-cell${i === cfg.currentMonth ? ' current' : ''}">${m}</div>`;
   });

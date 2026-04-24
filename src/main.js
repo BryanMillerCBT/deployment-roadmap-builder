@@ -11,6 +11,7 @@ import {
 } from './modals.js';
 import {
   startResize, doResize, stopResize, rowDragMouseDown, cellClick, startBarDrag,
+  startLabelResize, initLabelWidth,
 } from './interactions.js';
 import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
@@ -23,8 +24,9 @@ import {
 import { toggleWsCollapse, startWsRename } from './render.js';
 import { refreshConfigFromStartDate } from './config.js';
 
-const THEME_KEY = 'roadmap_theme';
-const THEMES    = ['gradient', 'gradient-dark'];
+const THEME_KEY   = 'roadmap_theme';
+const THEMES      = ['gradient', 'gradient-dark'];
+const DENSITY_KEY = 'roadmap_density';
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -41,7 +43,21 @@ function toggleTheme() {
   applyTheme(next);
 }
 
-Object.assign(window, { toggleTheme });
+function applyDensity(density) {
+  const gantt = document.getElementById('gantt');
+  if (!gantt) return;
+  gantt.classList.toggle('compact', density === 'compact');
+  localStorage.setItem(DENSITY_KEY, density);
+  const btn = document.getElementById('density-btn');
+  if (btn) btn.textContent = density === 'compact' ? 'Comfortable' : 'Compact';
+}
+
+function toggleDensity() {
+  const gantt = document.getElementById('gantt');
+  applyDensity(gantt?.classList.contains('compact') ? 'comfortable' : 'compact');
+}
+
+Object.assign(window, { toggleTheme, toggleDensity });
 import {
   initAuth, isConfigured, showSignIn, signOut, submitSignIn,
   loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
@@ -60,6 +76,7 @@ Object.assign(window, {
   wizardAddWorkstream, wizardRemoveWorkstream,
   wizardAddFeature, wizardRemoveFeature,
   toggleWsCollapse, startWsRename,
+  startLabelResize,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;
     if (id) {
@@ -83,12 +100,14 @@ async function init() {
   await initConfig();
   initState();
   if (state.ganttStartDate) refreshConfigFromStartDate(state.ganttStartDate);
+  initLabelWidth();
   await initAuth();
   initModals();
   initWizard();
   populateFilters();
   renderLegend();
   render();
+  applyDensity(localStorage.getItem(DENSITY_KEY) || 'comfortable');
   if (shouldShowWizard()) openWizard();
 
   // Wire up roadmap name input
