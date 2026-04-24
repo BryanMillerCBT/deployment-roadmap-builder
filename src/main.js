@@ -9,7 +9,8 @@ import {
   pickStart, pickEnd,
 } from './modals.js';
 import {
-  startResize, doResize, stopResize, dragStart, dragOver, dropOn, cellClick,
+  startResize, doResize, stopResize,
+  dragStart, dragOver, dragEnter, dragLeave, dragEnd, dropOn, cellClick,
 } from './interactions.js';
 import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
@@ -22,8 +23,9 @@ import {
 Object.assign(window, {
   render, openAddFeature, openEdit, openAddWorkstream, openEditWorkstream,
   saveFeature, deleteFeature, closeModal, saveWorkstream, deleteWorkstream,
-  pickStart, pickEnd, startResize, doResize, stopResize, dragStart, dragOver,
-  dropOn, cellClick, exportToPptx, exportToGoogleSlides, exportStateAsJson,
+  pickStart, pickEnd, startResize, doResize, stopResize,
+  dragStart, dragOver, dragEnter, dragLeave, dragEnd, dropOn, cellClick,
+  exportToPptx, exportToGoogleSlides, exportStateAsJson,
   showSignIn, signOut, saveRoadmap, newRoadmap,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;

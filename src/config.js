@@ -10,12 +10,14 @@ const DEFAULT_CONFIG = {
     { label: "Winter 27", start: 9, end: 11, bg: "#E1BEE7" },
   ],
   statuses: [
-    { id: "deployed",   label: "Deployed",        color: "#2E7D32", fill: "#C8E6C9" },
-    { id: "ready",      label: "Ready to deploy",  color: "#1565C0", fill: "#BBDEFB" },
-    { id: "poc",        label: "POC / Pilot",      color: "#E65100", fill: "#FFE0B2" },
-    { id: "exploring",  label: "Exploring",        color: "#6A1B9A", fill: "#E1BEE7" },
-    { id: "reqs",       label: "Reqs gathering",   color: "#AD1457", fill: "#FCE4EC" },
-    { id: "notstarted", label: "Not started",      color: "#546E7A", fill: "#ECEFF1" },
+    { id: "not-started",     label: "Not Started",     color: "#546E7A", fill: "#ECEFF1" },
+    { id: "identified",      label: "Identified",      color: "#6A1B9A", fill: "#E1BEE7" },
+    { id: "requirements",    label: "Requirements",    color: "#AD1457", fill: "#FCE4EC" },
+    { id: "in-progress",     label: "In Progress",     color: "#E65100", fill: "#FFE0B2" },
+    { id: "at-risk",         label: "At Risk",         color: "#B71C1C", fill: "#FFCDD2" },
+    { id: "on-hold",         label: "On Hold",         color: "#F57F17", fill: "#FFF9C4" },
+    { id: "ready-to-deploy", label: "Ready to Deploy", color: "#1565C0", fill: "#BBDEFB" },
+    { id: "deployed",        label: "Deployed",        color: "#2E7D32", fill: "#C8E6C9" },
   ],
 };
 

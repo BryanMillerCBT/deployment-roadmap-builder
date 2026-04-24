@@ -48,9 +48,24 @@ export function dragStart(e, fid) {
   e.dataTransfer.effectAllowed = 'move';
 }
 
-export function dragOver(e, fid) {
+export function dragOver(e) {
+  e.preventDefault();
+}
+
+export function dragEnter(e, fid) {
   e.preventDefault();
   if (fid !== dragSrc) e.currentTarget.classList.add('dragging-over');
+}
+
+export function dragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('dragging-over');
+  }
+}
+
+export function dragEnd() {
+  dragSrc = null;
+  document.querySelectorAll('.dragging-over').forEach(el => el.classList.remove('dragging-over'));
 }
 
 export function dropOn(e, fid) {
