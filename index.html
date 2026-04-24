@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deployment Roadmap Builder</title>
+  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-XONViG4U.js"></script>
+  <link rel="stylesheet" crossorigin href="/deployment-roadmap-builder/assets/index-YOzuhTeR.css">
+</head>
+<body>
+
+  <!-- Auth bar (visible only when Supabase is configured) -->
+  <div class="auth-bar" id="auth-bar"></div>
+
+  <!-- Roadmap selector row -->
+  <div class="roadmap-bar" id="roadmap-bar">
+    <label for="roadmap-name">Roadmap:</label>
+    <input type="text" id="roadmap-name" class="roadmap-name-input" placeholder="Customer / roadmap name" />
+    <select id="roadmap-select" onchange="handleRoadmapSelect(event)" style="display:none">
+      <option value="">— New roadmap —</option>
+    </select>
+    <button onclick="saveRoadmap()" class="primary" style="font-size:12px;padding:4px 12px">Save</button>
+    <button onclick="newRoadmap()" style="font-size:12px;padding:4px 12px">New</button>
+    <div style="flex:1"></div>
+    <button onclick="exportStateAsJson()" title="Export roadmap as JSON for sharing">⬇ Export JSON</button>
+    <label style="cursor:pointer;font-size:12px;padding:5px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)">
+      ⬆ Import JSON
+      <input type="file" accept=".json" onchange="handleJsonImport(event)" style="display:none" />
+    </label>
+  </div>
+
+  <!-- Main toolbar -->
+  <div class="toolbar">
+    <button class="primary" onclick="openAddFeature()">+ Add feature</button>
+    <button onclick="openAddWorkstream()">+ Add workstream</button>
+    <select id="filterWs" onchange="render()">
+      <option value="">All workstreams</option>
+    </select>
+    <select id="filterStatus" onchange="render()">
+      <option value="">All statuses</option>
+    </select>
+    <div style="flex:1"></div>
+    <button onclick="exportToPptx()">⬇ Export .pptx</button>
+    <button id="btn-google-slides" onclick="exportToGoogleSlides()">Export to Google Slides ↗</button>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend" id="legend"></div>
+
+  <!-- Gantt grid -->
+  <div class="gantt-wrap"><div class="gantt" id="gantt"></div></div>
+
+  <!-- Feature modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal">
+      <h3 id="modal-title">Add feature</h3>
+      <div class="form-row">
+        <label>Feature name</label>
+        <input type="text" id="f-name" placeholder="Feature name" />
+      </div>
+      <div class="form-row">
+        <label>Workstream</label>
+        <select id="f-ws"></select>
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="f-status"></select>
+      </div>
+      <div class="form-row">
+        <label>Start month</label>
+        <div class="month-grid" id="start-months"></div>
+      </div>
+      <div class="form-row">
+        <label>End month</label>
+        <div class="month-grid" id="end-months"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteFeature()">Delete</button>
+        <button onclick="closeModal()">Cancel</button>
+        <button class="save" onclick="saveFeature()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workstream modal -->
+  <div class="modal-bg" id="ws-modal-bg">
+    <div class="modal">
+      <h3 id="ws-modal-title">Add workstream</h3>
+      <div class="form-row">
+        <label>Workstream name</label>
+        <input type="text" id="ws-name-input" placeholder="e.g. Analytics" />
+      </div>
+      <div class="form-row">
+        <label>Color</label>
+        <select id="ws-color-input">
+          <option value="#4A6FA5">Blue</option>
+          <option value="#2E8B57">Green</option>
+          <option value="#B8621A">Orange</option>
+          <option value="#5B4B8A">Purple</option>
+          <option value="#C0392B">Red</option>
+          <option value="#16A085">Teal</option>
+          <option value="#7D6608">Olive</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button id="ws-delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteWorkstream()">Delete workstream</button>
+        <button onclick="document.getElementById('ws-modal-bg').classList.remove('open')">Cancel</button>
+        <button class="save" onclick="saveWorkstream()">Save</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
