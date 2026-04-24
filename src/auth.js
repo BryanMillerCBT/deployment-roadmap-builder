@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { state, persistState } from './state.js';
 import { render } from './render.js';
 import { populateFilters } from './filters.js';
-import { openSignInModal, closeSignInModal } from './modals.js';
+import { openSignInModal, closeSignInModal, closeNewRoadmapModal } from './modals.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -189,7 +189,11 @@ export async function saveRoadmap() {
 }
 
 export async function newRoadmap() {
-  if (!confirm('Start a new roadmap? Unsaved changes will be lost.')) return;
+  window.openNewRoadmapModal();
+}
+
+export async function confirmNewRoadmap() {
+  closeNewRoadmapModal();
   state.currentRoadmapId   = null;
   state.currentRoadmapName = 'New Roadmap';
   state.workstreams = [

@@ -109,6 +109,18 @@
     </div>
   </div>
 
+  <!-- New Roadmap confirmation modal -->
+  <div class="modal-bg" id="new-roadmap-modal-bg">
+    <div class="modal" style="width:320px">
+      <h3>Start new roadmap?</h3>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 16px">Any unsaved changes will be lost.</p>
+      <div class="modal-actions">
+        <button onclick="closeNewRoadmapModal()">Cancel</button>
+        <button class="danger" onclick="confirmNewRoadmap()">Start new</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Sign-in modal -->
   <div class="modal-bg" id="signin-modal-bg">
     <div class="modal">
