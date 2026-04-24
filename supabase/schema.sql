@@ -7,6 +7,7 @@ create table if not exists roadmaps (
   features    jsonb not null default '[]',
   next_id     int  not null default 1,
   created_by  uuid references auth.users on delete set null,
+  created_at  timestamptz not null default now(),
   updated_at  timestamptz default now()
 );
 
