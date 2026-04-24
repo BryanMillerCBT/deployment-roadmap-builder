@@ -45,3 +45,27 @@ create policy "Users can delete own roadmaps"
 -- Enable Realtime for live sync
 -- Run this separately in the Supabase dashboard:
 --   Table Editor → roadmaps → Realtime → Enable
+
+-- ── Release schedule (admin-managed, publicly readable) ──────────────────────
+
+create table if not exists releases (
+  id          serial primary key,
+  label       text     not null,
+  start_month smallint not null,
+  end_month   smallint not null,
+  bg          text     not null default '#e8f4fd',
+  sort_order  smallint not null default 0
+);
+
+alter table releases enable row level security;
+
+create policy "releases_public_read" on releases
+  for select using (true);
+
+-- Seed with default schedule (edit directly in Supabase to update)
+insert into releases (label, start_month, end_month, bg, sort_order) values
+  ('Winter 26', 0,  2,  '#DDE3F0', 0),
+  ('Spring 26', 3,  5,  '#C8E6C9', 1),
+  ('Summer 26', 6,  8,  '#FFE0B2', 2),
+  ('Winter 27', 9,  11, '#E1BEE7', 3)
+on conflict do nothing;

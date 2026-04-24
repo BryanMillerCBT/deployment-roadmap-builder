@@ -37,3 +37,8 @@ export async function initConfig() {
 export function getConfig() {
   return _config || DEFAULT_CONFIG;
 }
+
+export function setReleases(arr) {
+  const cfg = _config || DEFAULT_CONFIG;
+  cfg.releases = arr;
+}
