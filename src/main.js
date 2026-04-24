@@ -7,6 +7,7 @@ import {
   initModals, openAddFeature, openEdit, openAddWorkstream, openEditWorkstream,
   saveFeature, deleteFeature, closeModal, saveWorkstream, deleteWorkstream,
   pickStart, pickEnd, openSignInModal, closeSignInModal,
+  openNewRoadmapModal, closeNewRoadmapModal,
 } from './modals.js';
 import {
   startResize, doResize, stopResize, rowDragMouseDown, cellClick,
@@ -15,7 +16,7 @@ import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
 import {
   initAuth, isConfigured, showSignIn, signOut, submitSignIn,
-  loadRoadmap, saveRoadmap, newRoadmap, subscribeRealtime,
+  loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
 } from './auth.js';
 
 // Expose all functions called from inline onclick handlers in render()
@@ -25,7 +26,8 @@ Object.assign(window, {
   pickStart, pickEnd, startResize, doResize, stopResize, rowDragMouseDown, cellClick,
   exportToPptx, exportToGoogleSlides, exportStateAsJson,
   showSignIn, signOut, submitSignIn, openSignInModal, closeSignInModal,
-  saveRoadmap, newRoadmap,
+  openNewRoadmapModal, closeNewRoadmapModal,
+  saveRoadmap, newRoadmap, confirmNewRoadmap,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;
     if (id) {

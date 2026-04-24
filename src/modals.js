@@ -142,6 +142,14 @@ export function deleteWorkstream() {
   persistState();
 }
 
+export function openNewRoadmapModal() {
+  document.getElementById('new-roadmap-modal-bg').classList.add('open');
+}
+
+export function closeNewRoadmapModal() {
+  document.getElementById('new-roadmap-modal-bg').classList.remove('open');
+}
+
 export function openSignInModal() {
   document.getElementById('signin-email').value = '';
   const msg = document.getElementById('signin-message');
@@ -168,5 +176,8 @@ export function initModals() {
   });
   document.getElementById('signin-email').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') window.submitSignIn();
+  });
+  document.getElementById('new-roadmap-modal-bg').addEventListener('click', function(e) {
+    if (e.target === this) closeNewRoadmapModal();
   });
 }
