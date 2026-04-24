@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deployment Roadmap Builder</title>
-  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-w764wtBd.js"></script>
+  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-CL5BTlRm.js"></script>
   <link rel="stylesheet" crossorigin href="/deployment-roadmap-builder/assets/index-BYb2wD9E.css">
 </head>
 <body>
@@ -107,6 +107,18 @@
         <button id="ws-delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteWorkstream()">Delete workstream</button>
         <button onclick="document.getElementById('ws-modal-bg').classList.remove('open')">Cancel</button>
         <button class="save" onclick="saveWorkstream()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Roadmap confirmation modal -->
+  <div class="modal-bg" id="new-roadmap-modal-bg">
+    <div class="modal" style="width:320px">
+      <h3>Start new roadmap?</h3>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 16px">Any unsaved changes will be lost.</p>
+      <div class="modal-actions">
+        <button onclick="closeNewRoadmapModal()">Cancel</button>
+        <button class="danger" onclick="confirmNewRoadmap()">Start new</button>
       </div>
     </div>
   </div>
