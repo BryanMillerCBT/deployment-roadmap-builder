@@ -15,6 +15,10 @@ import {
 import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
 import {
+  initWizard, shouldShowWizard, openWizard,
+  wizardNext, wizardBack, wizardSkip, wizardAddWorkstream, wizardRemoveWorkstream,
+} from './wizard.js';
+import {
   initAuth, isConfigured, showSignIn, signOut, submitSignIn,
   loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
 } from './auth.js';
@@ -28,6 +32,7 @@ Object.assign(window, {
   showSignIn, signOut, submitSignIn, openSignInModal, closeSignInModal,
   openNewRoadmapModal, closeNewRoadmapModal,
   saveRoadmap, newRoadmap, confirmNewRoadmap,
+  openWizard, wizardNext, wizardBack, wizardSkip, wizardAddWorkstream, wizardRemoveWorkstream,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;
     if (id) {
@@ -51,9 +56,11 @@ async function init() {
   initState();
   await initAuth();
   initModals();
+  initWizard();
   populateFilters();
   renderLegend();
   render();
+  if (shouldShowWizard()) openWizard();
 
   // Wire up roadmap name input
   const nameEl = document.getElementById('roadmap-name');

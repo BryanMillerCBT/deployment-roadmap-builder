@@ -76,6 +76,18 @@ body.is-dragging .bar, body.is-dragging .bar * { pointer-events:none }
 .modal-actions button.save { background:#232F3E;color:#fff;border-color:#232F3E }
 .modal-actions button.danger { background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger) }
 
+/* Setup wizard */
+.wizard-desc { font-size:12px;color:var(--color-text-secondary);margin-bottom:14px }
+.wizard-ws-row { display:flex;align-items:center;gap:8px;margin-bottom:8px }
+.wizard-ws-row .wizard-ws-color { width:36px;height:32px;padding:2px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;flex-shrink:0 }
+.wizard-ws-row .wizard-ws-name { flex:1;font-size:13px;padding:6px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary) }
+.wizard-ws-remove { font-size:11px;padding:2px 8px;border:0.5px solid var(--color-border-danger);border-radius:var(--border-radius-md);background:var(--color-background-danger);color:var(--color-text-danger);cursor:pointer }
+.wizard-add-ws { font-size:11px;padding:4px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;margin-top:4px }
+.wizard-summary-row { font-size:12px;margin-bottom:8px }
+.wizard-summary-label { font-size:11px;font-weight:500;color:var(--color-text-secondary) }
+.wizard-summary-ws { display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:6px }
+.wizard-ws-swatch { width:10px;height:10px;border-radius:50%;flex-shrink:0 }
+
 /* Roadmap selector */
 .roadmap-bar { display:flex;align-items:center;gap:8px;padding:8px 0;margin-bottom:4px;font-size:12px;color:var(--color-text-secondary) }
 .roadmap-bar select { font-size:12px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);min-width:200px }
