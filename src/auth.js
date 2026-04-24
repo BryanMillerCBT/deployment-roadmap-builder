@@ -66,7 +66,8 @@ export async function submitSignIn() {
   btnEl.disabled = true;
   msgEl.style.display = 'none';
 
-  const { error } = await supabase.auth.signInWithOtp({ email });
+  const redirectTo = window.location.origin + (import.meta.env.BASE_URL || '/');
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
 
   if (error) {
     msgEl.textContent = `Error: ${error.message}`;
