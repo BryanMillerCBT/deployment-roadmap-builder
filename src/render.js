@@ -71,7 +71,7 @@ export function render() {
         if (isStart) {
           html += `<div class="bar"
             style="left:4px;width:${totalW}px;background:${st.fill};border:1px solid ${st.color};color:${st.color}"
-            onclick="openEdit(${f.id});event.stopPropagation()">
+            onmousedown="startBarDrag(event,${f.id})">
             <div class="bar-resize-l" onmousedown="startResize(event,${f.id},'l')"></div>
             <span style="overflow:hidden;text-overflow:ellipsis">${f.name}</span>
             <div class="bar-resize-r" onmousedown="startResize(event,${f.id},'r')"></div>
