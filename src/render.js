@@ -57,17 +57,10 @@ export function render() {
 
     wsFeatures.forEach(f => {
       const st = statusFor(f.status);
-      html += `<div class="feature-row" style="display:grid;grid-template-columns:${gridCols()}"
-        draggable="true"
-        ondragstart="dragStart(event,${f.id})"
-        ondragenter="dragEnter(event,${f.id})"
-        ondragover="dragOver(event)"
-        ondragleave="dragLeave(event)"
-        ondragend="dragEnd()"
-        ondrop="dropOn(event,${f.id})">`;
+      html += `<div class="feature-row" data-fid="${f.id}" style="display:grid;grid-template-columns:${gridCols()}">`;
 
       html += `<div class="feature-label">
-        <span class="drag-handle">⠿</span>
+        <span class="drag-handle" onmousedown="rowDragMouseDown(event,${f.id})">⠿</span>
         <span onclick="openEdit(${f.id})" style="cursor:pointer">${f.name}</span>
       </div>`;
 

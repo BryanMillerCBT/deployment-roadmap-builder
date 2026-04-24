@@ -9,8 +9,7 @@ import {
   pickStart, pickEnd, openSignInModal, closeSignInModal,
 } from './modals.js';
 import {
-  startResize, doResize, stopResize,
-  dragStart, dragOver, dragEnter, dragLeave, dragEnd, dropOn, cellClick,
+  startResize, doResize, stopResize, rowDragMouseDown, cellClick,
 } from './interactions.js';
 import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
@@ -23,8 +22,7 @@ import {
 Object.assign(window, {
   render, openAddFeature, openEdit, openAddWorkstream, openEditWorkstream,
   saveFeature, deleteFeature, closeModal, saveWorkstream, deleteWorkstream,
-  pickStart, pickEnd, startResize, doResize, stopResize,
-  dragStart, dragOver, dragEnter, dragLeave, dragEnd, dropOn, cellClick,
+  pickStart, pickEnd, startResize, doResize, stopResize, rowDragMouseDown, cellClick,
   exportToPptx, exportToGoogleSlides, exportStateAsJson,
   showSignIn, signOut, submitSignIn, openSignInModal, closeSignInModal,
   saveRoadmap, newRoadmap,
