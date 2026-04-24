@@ -60,9 +60,11 @@ export function render() {
       html += `<div class="feature-row" style="display:grid;grid-template-columns:${gridCols()}"
         draggable="true"
         ondragstart="dragStart(event,${f.id})"
-        ondragover="dragOver(event,${f.id})"
-        ondrop="dropOn(event,${f.id})"
-        ondragleave="this.classList.remove('dragging-over')">`;
+        ondragenter="dragEnter(event,${f.id})"
+        ondragover="dragOver(event)"
+        ondragleave="dragLeave(event)"
+        ondragend="dragEnd()"
+        ondrop="dropOn(event,${f.id})">`;
 
       html += `<div class="feature-label">
         <span class="drag-handle">⠿</span>
