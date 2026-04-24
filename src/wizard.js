@@ -1,5 +1,5 @@
 import { getConfig, refreshConfigFromStartDate } from './config.js';
-import { state, persistState } from './state.js';
+import { state, persistState, hasPersistedState } from './state.js';
 import { populateFilters } from './filters.js';
 import { render } from './render.js';
 
@@ -12,7 +12,7 @@ let wizardWs       = [];
 let wizardFeatures = [];
 
 export function shouldShowWizard() {
-  return !localStorage.getItem(WIZARD_KEY) && state.features.length === 0;
+  return !localStorage.getItem(WIZARD_KEY) && !hasPersistedState();
 }
 
 export function openWizard() {
