@@ -94,7 +94,7 @@ export function rowDragMouseDown(e, fid) {
   e.preventDefault();
   const f = state.features.find(x => x.id === fid);
   if (!f) return;
-  rowDrag = { fid, ws: f.ws, targetFid: null };
+  rowDrag = { fid, ws: f.ws, targetFid: null, targetWs: null };
   document.body.classList.add('is-dragging');
   document.addEventListener('mousemove', onRowDragMove);
   document.addEventListener('mouseup', onRowDragUp);
@@ -103,18 +103,31 @@ export function rowDragMouseDown(e, fid) {
 function onRowDragMove(e) {
   if (!rowDrag) return;
   document.querySelectorAll('.dragging-over').forEach(el => el.classList.remove('dragging-over'));
+  rowDrag.targetFid = null;
+  rowDrag.targetWs  = null;
+
   const el = document.elementFromPoint(e.clientX, e.clientY);
+
+  // Prefer a feature row as the drop target
   const row = el?.closest('[data-fid]');
-  const targetFid = row ? parseInt(row.dataset.fid) : null;
-  if (targetFid && targetFid !== rowDrag.fid) {
-    const tgt = state.features.find(x => x.id === targetFid);
-    if (tgt?.ws === rowDrag.ws) {
+  if (row) {
+    const targetFid = parseInt(row.dataset.fid);
+    if (targetFid !== rowDrag.fid) {
       row.classList.add('dragging-over');
       rowDrag.targetFid = targetFid;
       return;
     }
   }
-  rowDrag.targetFid = null;
+
+  // Fall back to a workstream header (drop at end of that workstream)
+  const wsHeader = el?.closest('[data-wsid]');
+  if (wsHeader) {
+    const wsId = wsHeader.dataset.wsid;
+    if (wsId !== rowDrag.ws) {
+      wsHeader.classList.add('dragging-over');
+      rowDrag.targetWs = wsId;
+    }
+  }
 }
 
 function onRowDragUp() {
@@ -123,16 +136,28 @@ function onRowDragUp() {
   document.querySelectorAll('.dragging-over').forEach(el => el.classList.remove('dragging-over'));
   document.removeEventListener('mousemove', onRowDragMove);
   document.removeEventListener('mouseup', onRowDragUp);
-  const { fid, targetFid } = rowDrag;
+
+  const { fid, targetFid, targetWs } = rowDrag;
   rowDrag = null;
-  if (!targetFid || targetFid === fid) return;
+
   const src = state.features.find(x => x.id === fid);
-  const tgt = state.features.find(x => x.id === targetFid);
-  if (!src || !tgt || src.ws !== tgt.ws) return;
-  const si = state.features.indexOf(src);
-  const ti = state.features.indexOf(tgt);
-  state.features.splice(si, 1);
-  state.features.splice(ti, 0, src);
-  render();
-  persistState();
+  if (!src) return;
+
+  if (targetFid && targetFid !== fid) {
+    // Drop onto another feature — insert before it (works across workstreams)
+    const tgt = state.features.find(x => x.id === targetFid);
+    if (!tgt) return;
+    src.ws = tgt.ws;
+    const si = state.features.indexOf(src);
+    state.features.splice(si, 1);
+    const ti = state.features.indexOf(tgt);
+    state.features.splice(ti, 0, src);
+    render();
+    persistState();
+  } else if (targetWs) {
+    // Drop onto a workstream header — append to end of that workstream
+    src.ws = targetWs;
+    render();
+    persistState();
+  }
 }

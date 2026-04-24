@@ -46,7 +46,7 @@ export function render() {
     const wsFeatures = state.features.filter(f => f.ws === ws.id && (!filterSt || f.status === filterSt));
 
     html += `<div class="ws-section">`;
-    html += `<div class="ws-header">
+    html += `<div class="ws-header" data-wsid="${ws.id}">
       <div class="ws-dot" style="background:${ws.color}"></div>
       <div class="ws-name">${ws.name}</div>
       <div class="ws-actions">
