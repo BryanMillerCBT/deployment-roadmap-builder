@@ -23,13 +23,24 @@ create trigger roadmaps_updated_at
   before update on roadmaps
   for each row execute function update_updated_at();
 
--- Row-level security: all authenticated users can read/write all roadmaps
+-- Row-level security: users can only access their own roadmaps
 alter table roadmaps enable row level security;
 
-create policy "Authenticated users can manage roadmaps"
-  on roadmaps for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
+create policy "Users can read own roadmaps"
+  on roadmaps for select
+  using (created_by = auth.uid());
+
+create policy "Users can insert own roadmaps"
+  on roadmaps for insert
+  with check (created_by = auth.uid());
+
+create policy "Users can update own roadmaps"
+  on roadmaps for update
+  using (created_by = auth.uid());
+
+create policy "Users can delete own roadmaps"
+  on roadmaps for delete
+  using (created_by = auth.uid());
 
 -- Enable Realtime for live sync
 -- Run this separately in the Supabase dashboard:

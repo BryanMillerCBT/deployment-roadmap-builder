@@ -23,8 +23,8 @@ export async function initAuth() {
 
   supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const { data: { session } } = await supabase.auth.getSession();
-  currentUser = session?.user || null;
+  const { data: { user } } = await supabase.auth.getUser();
+  currentUser = user || null;
   updateAuthBar();
 
   supabase.auth.onAuthStateChange((_event, session) => {
@@ -81,6 +81,7 @@ function renderRoadmapSelector(roadmaps) {
   sel.innerHTML = '<option value="">— New roadmap —</option>' +
     roadmaps.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
   if (state.currentRoadmapId) sel.value = state.currentRoadmapId;
+  sel.style.display = '';
 }
 
 export async function loadRoadmap(id) {
@@ -117,12 +118,19 @@ export async function saveRoadmap() {
 
   let result;
   if (state.currentRoadmapId) {
-    result = await supabase.from('roadmaps').update(payload).eq('id', state.currentRoadmapId).select().single();
+    result = await supabase.from('roadmaps').update(payload)
+      .eq('id', state.currentRoadmapId)
+      .eq('created_by', currentUser.id)
+      .select().single();
   } else {
     result = await supabase.from('roadmaps').insert(payload).select().single();
   }
 
-  if (result.error) { console.error('Save failed:', result.error); return; }
+  if (result.error) {
+    console.error('Save failed:', result.error);
+    alert(`Save failed: ${result.error.message}`);
+    return;
+  }
   state.currentRoadmapId = result.data.id;
   await loadRoadmapList();
   persistState();
@@ -156,7 +164,6 @@ export function subscribeRealtime(roadmapId) {
     .channel(`roadmap:${roadmapId}`)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'roadmaps', filter: `id=eq.${roadmapId}` },
       (payload) => {
-        if (payload.new.updated_at === payload.old.updated_at) return;
         state.workstreams = payload.new.workstreams;
         state.features    = payload.new.features;
         state.nextId      = payload.new.next_id;
