@@ -86,6 +86,29 @@ export async function signOut() {
   updateAuthBar();
 }
 
+// ── UI helpers ───────────────────────────────────────────────────────────────
+
+let _statusTimer = null;
+
+function setSaveStatus(msg, type = 'loading') {
+  const el  = document.getElementById('save-status');
+  const btn = document.getElementById('save-btn');
+  if (!el) return;
+  clearTimeout(_statusTimer);
+  const colors = {
+    loading: 'var(--color-text-secondary)',
+    success: '#2E7D32',
+    error:   'var(--color-text-danger)',
+  };
+  el.textContent = msg;
+  el.style.color   = colors[type] || colors.loading;
+  el.style.display = 'inline';
+  if (btn) btn.disabled = type === 'loading';
+  if (type === 'success') {
+    _statusTimer = setTimeout(() => { el.style.display = 'none'; }, 3000);
+  }
+}
+
 // ── Roadmap CRUD ──────────────────────────────────────────────────────────────
 
 export async function loadRoadmapList() {
@@ -106,17 +129,23 @@ function renderRoadmapSelector(roadmaps) {
 
 export async function loadRoadmap(id) {
   if (!supabase || !id) return;
+  setSaveStatus('Loading…');
   const { data, error } = await supabase.from('roadmaps').select('*').eq('id', id).single();
-  if (error) { console.error('Failed to load roadmap:', error); return; }
-  state.workstreams       = data.workstreams;
-  state.features          = data.features;
-  state.nextId            = data.next_id;
-  state.currentRoadmapId  = data.id;
+  if (error) {
+    console.error('Failed to load roadmap:', error);
+    setSaveStatus(`Load failed: ${error.message}`, 'error');
+    return;
+  }
+  state.workstreams        = data.workstreams;
+  state.features           = data.features;
+  state.nextId             = data.next_id;
+  state.currentRoadmapId   = data.id;
   state.currentRoadmapName = data.name;
   const nameEl = document.getElementById('roadmap-name');
   if (nameEl) nameEl.value = data.name;
   populateFilters();
   render();
+  setSaveStatus('Loaded', 'success');
 }
 
 export async function saveRoadmap() {
@@ -124,6 +153,7 @@ export async function saveRoadmap() {
     persistState();
     return;
   }
+  setSaveStatus('Saving…');
   const name = document.getElementById('roadmap-name')?.value?.trim() || state.currentRoadmapName || 'Untitled';
   state.currentRoadmapName = name;
 
@@ -148,12 +178,13 @@ export async function saveRoadmap() {
 
   if (result.error) {
     console.error('Save failed:', result.error);
-    alert(`Save failed: ${result.error.message}`);
+    setSaveStatus(`Save failed: ${result.error.message}`, 'error');
     return;
   }
   state.currentRoadmapId = result.data.id;
   await loadRoadmapList();
   persistState();
+  setSaveStatus('Saved', 'success');
 }
 
 export async function newRoadmap() {
