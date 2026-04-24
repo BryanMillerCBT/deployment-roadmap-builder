@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deployment Roadmap Builder</title>
-  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-BXMHdkef.js"></script>
-  <link rel="stylesheet" crossorigin href="/deployment-roadmap-builder/assets/index-DyEz2UZb.css">
+  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-DMg1xzeb.js"></script>
+  <link rel="stylesheet" crossorigin href="/deployment-roadmap-builder/assets/index-nvHik5z0.css">
 </head>
 <body>
 
@@ -99,6 +99,22 @@
         <button id="ws-delete-btn" class="danger" style="margin-right:auto;display:none" onclick="deleteWorkstream()">Delete workstream</button>
         <button onclick="document.getElementById('ws-modal-bg').classList.remove('open')">Cancel</button>
         <button class="save" onclick="saveWorkstream()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Setup wizard -->
+  <div class="modal-bg" id="wizard-modal-bg">
+    <div class="modal" style="width:420px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h3 id="wizard-title" style="margin:0">Welcome</h3>
+        <span id="wizard-step-indicator" style="font-size:11px;color:var(--color-text-tertiary)">Step 1 of 3</span>
+      </div>
+      <div id="wizard-content"></div>
+      <div class="modal-actions" style="margin-top:18px">
+        <button onclick="wizardSkip()" style="margin-right:auto;color:var(--color-text-tertiary);border-color:transparent;background:transparent">Skip</button>
+        <button id="wizard-back-btn" style="display:none" onclick="wizardBack()">← Back</button>
+        <button class="save" id="wizard-next-btn" onclick="wizardNext()">Next →</button>
       </div>
     </div>
   </div>
