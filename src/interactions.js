@@ -43,38 +43,47 @@ export function stopResize() {
   document.removeEventListener('mouseup', stopResize);
 }
 
-export function dragStart(e, fid) {
-  dragSrc = fid;
-  e.dataTransfer.effectAllowed = 'move';
+let rowDrag = null;
+
+export function rowDragMouseDown(e, fid) {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  const f = state.features.find(x => x.id === fid);
+  if (!f) return;
+  rowDrag = { fid, ws: f.ws, targetFid: null };
   document.body.classList.add('is-dragging');
+  document.addEventListener('mousemove', onRowDragMove);
+  document.addEventListener('mouseup', onRowDragUp);
 }
 
-export function dragOver(e) {
-  e.preventDefault();
-}
-
-export function dragEnter(e, fid) {
-  e.preventDefault();
-  if (fid !== dragSrc) e.currentTarget.classList.add('dragging-over');
-}
-
-export function dragLeave(e) {
-  if (!e.currentTarget.contains(e.relatedTarget)) {
-    e.currentTarget.classList.remove('dragging-over');
+function onRowDragMove(e) {
+  if (!rowDrag) return;
+  document.querySelectorAll('.dragging-over').forEach(el => el.classList.remove('dragging-over'));
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const row = el?.closest('[data-fid]');
+  const targetFid = row ? parseInt(row.dataset.fid) : null;
+  if (targetFid && targetFid !== rowDrag.fid) {
+    const tgt = state.features.find(x => x.id === targetFid);
+    if (tgt?.ws === rowDrag.ws) {
+      row.classList.add('dragging-over');
+      rowDrag.targetFid = targetFid;
+      return;
+    }
   }
+  rowDrag.targetFid = null;
 }
 
-export function dragEnd() {
-  dragSrc = null;
+function onRowDragUp() {
+  if (!rowDrag) return;
   document.body.classList.remove('is-dragging');
   document.querySelectorAll('.dragging-over').forEach(el => el.classList.remove('dragging-over'));
-}
-
-export function dropOn(e, fid) {
-  e.currentTarget.classList.remove('dragging-over');
-  if (!dragSrc || dragSrc === fid) return;
-  const src = state.features.find(x => x.id === dragSrc);
-  const tgt = state.features.find(x => x.id === fid);
+  document.removeEventListener('mousemove', onRowDragMove);
+  document.removeEventListener('mouseup', onRowDragUp);
+  const { fid, targetFid } = rowDrag;
+  rowDrag = null;
+  if (!targetFid || targetFid === fid) return;
+  const src = state.features.find(x => x.id === fid);
+  const tgt = state.features.find(x => x.id === targetFid);
   if (!src || !tgt || src.ws !== tgt.ws) return;
   const si = state.features.indexOf(src);
   const ti = state.features.indexOf(tgt);
