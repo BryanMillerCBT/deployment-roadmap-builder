@@ -25,7 +25,7 @@ export function render() {
     const rel = cfg.releases.find(r => r.start <= i && i <= r.end);
     if (rel && i === rel.start) {
       const span = rel.end - rel.start + 1;
-      html += `<div class="release-cell" style="grid-column:span ${span};background:${rel.bg}">${rel.label}</div>`;
+      html += `<div class="release-cell" style="grid-column:span ${span};background:${rel.bg};color:${rel.color || ''}">${rel.label}</div>`;
     } else if (!rel) {
       html += `<div class="release-cell"></div>`;
     }
@@ -69,12 +69,13 @@ export function render() {
         const totalW = (f.end - f.start + 1) * cfg.colWidth - 8;
         html += `<div class="cell${i % 2 ? ' alt' : ''}" onclick="cellClick(${f.id},${i})">`;
         if (isStart) {
+          const grips = `<span class="grip-dot"></span><span class="grip-dot"></span><span class="grip-dot"></span>`;
           html += `<div class="bar"
-            style="left:4px;width:${totalW}px;background:${st.fill};border:1px solid ${st.color};color:${st.color}"
+            style="left:4px;width:${totalW}px;background:${st.fill};color:${st.color}"
             onmousedown="startBarDrag(event,${f.id})">
-            <div class="bar-resize-l" onmousedown="startResize(event,${f.id},'l')"></div>
-            <span style="overflow:hidden;text-overflow:ellipsis">${f.name}</span>
-            <div class="bar-resize-r" onmousedown="startResize(event,${f.id},'r')"></div>
+            <div class="bar-resize-l" onmousedown="startResize(event,${f.id},'l')">${grips}</div>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;pointer-events:none;padding:0 2px">${f.name}</span>
+            <div class="bar-resize-r" onmousedown="startResize(event,${f.id},'r')">${grips}</div>
           </div>`;
         }
         html += '</div>';
