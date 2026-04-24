@@ -62,6 +62,10 @@ export function exportStateAsJson() {
   URL.revokeObjectURL(url);
 }
 
+export function hasPersistedState() {
+  return !!localStorage.getItem(LOCAL_KEY);
+}
+
 export function importStateFromJson(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
