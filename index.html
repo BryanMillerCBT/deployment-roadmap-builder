@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deployment Roadmap Builder</title>
-  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-ChW4_BGP.js"></script>
+  <script type="module" crossorigin src="/deployment-roadmap-builder/assets/index-CFHFVPzH.js"></script>
   <link rel="stylesheet" crossorigin href="/deployment-roadmap-builder/assets/index-YOzuhTeR.css">
 </head>
 <body>
@@ -19,7 +19,8 @@
     <select id="roadmap-select" onchange="handleRoadmapSelect(event)" style="display:none">
       <option value="">— New roadmap —</option>
     </select>
-    <button onclick="saveRoadmap()" class="primary" style="font-size:12px;padding:4px 12px">Save</button>
+    <button id="save-btn" onclick="saveRoadmap()" class="primary" style="font-size:12px;padding:4px 12px">Save</button>
+    <span id="save-status" style="font-size:11px;display:none"></span>
     <button onclick="newRoadmap()" style="font-size:12px;padding:4px 12px">New</button>
     <div style="flex:1"></div>
     <button onclick="exportStateAsJson()" title="Export roadmap as JSON for sharing">⬇ Export JSON</button>
