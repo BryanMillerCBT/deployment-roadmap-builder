@@ -3,7 +3,7 @@ import { state, persistState } from './state.js';
 import { render } from './render.js';
 
 let resizing = null;
-let dragSrc = null;
+let barDrag  = null;
 
 export function cellClick(fid, mi) {
   const f = state.features.find(x => x.id === fid);
@@ -41,6 +41,50 @@ export function stopResize() {
   resizing = null;
   document.removeEventListener('mousemove', doResize);
   document.removeEventListener('mouseup', stopResize);
+}
+
+// ── Bar drag (move entire bar horizontally) ───────────────────────────────────
+
+export function startBarDrag(e, fid) {
+  if (e.button !== 0) return;
+  e.stopPropagation();
+  e.preventDefault();
+  const f = state.features.find(x => x.id === fid);
+  if (!f) return;
+  barDrag = { fid, startX: e.clientX, orig: { start: f.start, end: f.end }, moved: false };
+  document.addEventListener('mousemove', doBarDrag);
+  document.addEventListener('mouseup', stopBarDrag);
+}
+
+function doBarDrag(e) {
+  if (!barDrag) return;
+  const dx = e.clientX - barDrag.startX;
+  if (!barDrag.moved && Math.abs(dx) < 5) return;
+  barDrag.moved = true;
+  document.body.classList.add('is-dragging');
+  const cfg = getConfig();
+  const dMonths = Math.round(dx / cfg.colWidth);
+  const f = state.features.find(x => x.id === barDrag.fid);
+  if (!f) return;
+  const duration = barDrag.orig.end - barDrag.orig.start;
+  const newStart = Math.max(0, Math.min(cfg.months.length - 1 - duration, barDrag.orig.start + dMonths));
+  f.start = newStart;
+  f.end   = newStart + duration;
+  render();
+}
+
+function stopBarDrag() {
+  if (!barDrag) return;
+  document.removeEventListener('mousemove', doBarDrag);
+  document.removeEventListener('mouseup', stopBarDrag);
+  document.body.classList.remove('is-dragging');
+  const { fid, moved } = barDrag;
+  barDrag = null;
+  if (moved) {
+    persistState();
+  } else {
+    window.openEdit(fid);
+  }
 }
 
 let rowDrag = null;

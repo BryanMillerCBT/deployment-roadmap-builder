@@ -51,7 +51,7 @@ body {
 .feature-label .drag-handle { cursor:grab;color:var(--color-text-tertiary);font-size:13px }
 .cell { border-right:0.5px solid var(--color-border-tertiary);height:100%;min-height:28px;position:relative;cursor:pointer }
 .cell.alt { background:rgba(0,0,0,.015) }
-.bar { position:absolute;top:4px;bottom:4px;border-radius:3px;display:flex;align-items:center;padding:0 5px;font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;cursor:pointer;transition:opacity .1s }
+.bar { position:absolute;top:4px;bottom:4px;border-radius:3px;display:flex;align-items:center;padding:0 5px;font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;cursor:grab;transition:opacity .1s }
 .bar:hover { opacity:.85;filter:brightness(1.05) }
 .bar .bar-resize-l,.bar .bar-resize-r { position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize;z-index:2 }
 .bar .bar-resize-l { left:0;border-radius:3px 0 0 3px }
