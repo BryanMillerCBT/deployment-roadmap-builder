@@ -20,6 +20,7 @@ import {
   wizardAddWorkstream, wizardRemoveWorkstream,
   wizardAddFeature, wizardRemoveFeature,
 } from './wizard.js';
+import { toggleWsCollapse, startWsRename } from './render.js';
 import { refreshConfigFromStartDate } from './config.js';
 
 const THEME_KEY = 'roadmap_theme';
@@ -58,6 +59,7 @@ Object.assign(window, {
   openWizard, wizardNext, wizardBack, wizardSkip,
   wizardAddWorkstream, wizardRemoveWorkstream,
   wizardAddFeature, wizardRemoveFeature,
+  toggleWsCollapse, startWsRename,
   handleRoadmapSelect: async (e) => {
     const id = e.target.value;
     if (id) {
