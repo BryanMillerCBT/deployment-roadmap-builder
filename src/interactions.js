@@ -46,6 +46,7 @@ export function stopResize() {
 export function dragStart(e, fid) {
   dragSrc = fid;
   e.dataTransfer.effectAllowed = 'move';
+  document.body.classList.add('is-dragging');
 }
 
 export function dragOver(e) {
@@ -65,6 +66,7 @@ export function dragLeave(e) {
 
 export function dragEnd() {
   dragSrc = null;
+  document.body.classList.remove('is-dragging');
   document.querySelectorAll('.dragging-over').forEach(el => el.classList.remove('dragging-over'));
 }
 
