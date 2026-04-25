@@ -9,10 +9,7 @@ import {
   pickStart, pickEnd, openSignInModal, closeSignInModal,
   openNewRoadmapModal, closeNewRoadmapModal,
 } from './modals.js';
-import {
-  startResize, doResize, stopResize, rowDragMouseDown, cellClick, startBarDrag,
-  startLabelResize, initLabelWidth,
-} from './interactions.js';
+import { startLabelResize, initLabelWidth } from './interactions.js';
 import { exportToPptx } from './export/exportPptx.js';
 import { exportToGoogleSlides } from './export/exportGoogleSlides.js';
 import {
@@ -23,6 +20,10 @@ import {
 } from './wizard.js';
 import { toggleWsCollapse, startWsRename } from './render.js';
 import { refreshConfigFromStartDate } from './config.js';
+import {
+  initAuth, showSignIn, signOut, submitSignIn,
+  loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
+} from './auth.js';
 
 const THEME_KEY   = 'roadmap_theme';
 const THEMES      = ['gradient', 'gradient-dark'];
@@ -61,16 +62,13 @@ function toggleDensity() {
 }
 
 Object.assign(window, { toggleTheme, toggleDensity });
-import {
-  initAuth, isConfigured, showSignIn, signOut, submitSignIn,
-  loadRoadmap, saveRoadmap, newRoadmap, confirmNewRoadmap, subscribeRealtime,
-} from './auth.js';
 
-// Expose all functions called from inline onclick handlers in render()
+// Expose all functions called from inline onclick handlers
 Object.assign(window, {
-  render, openAddFeature, openEdit, openAddWorkstream, openEditWorkstream,
+  render,
+  openAddFeature, openEdit, openAddWorkstream, openEditWorkstream,
   saveFeature, deleteFeature, closeModal, saveWorkstream, deleteWorkstream,
-  pickStart, pickEnd, startResize, doResize, stopResize, rowDragMouseDown, cellClick, startBarDrag,
+  pickStart, pickEnd,
   exportToPptx, exportToGoogleSlides, exportStateAsJson,
   showSignIn, signOut, submitSignIn, openSignInModal, closeSignInModal,
   openNewRoadmapModal, closeNewRoadmapModal,
@@ -114,7 +112,6 @@ async function init() {
   _appReady = true;
   if (shouldShowWizard()) openWizard();
 
-  // Wire up roadmap name input
   const nameEl = document.getElementById('roadmap-name');
   if (nameEl) {
     nameEl.value = state.currentRoadmapName;

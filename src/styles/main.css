@@ -1,3 +1,5 @@
+@import '../../node_modules/vis-timeline/styles/vis-timeline-graph2d.min.css';
+
 /* ── Certinia Design Tokens ─────────────────────────────────────────────────── */
 :root {
   --font-display: 'Bodoni Moda', Georgia, serif;
@@ -109,37 +111,129 @@ button { font-family: var(--font-body); cursor: pointer; }
   background:var(--bg);color:var(--text);
 }
 
-/* ── Gantt ──────────────────────────────────────────────────────────────────── */
+/* ── Gantt wrapper ───────────────────────────────────────────────────────────── */
 .gantt-wrap { overflow-x:auto }
-.gantt { min-width:900px;font-size:11px;user-select:none }
-.gantt-header { display:grid;background:var(--bg-2);border-bottom:1px solid var(--border-2) }
-.month-cell {
-  padding:5px 2px;text-align:center;font-weight:500;font-size:10px;
-  font-family:var(--font-body);color:var(--text-2);
-  border-right:1px solid var(--border-2);
-  text-transform:uppercase;letter-spacing:.04em;
-}
-.month-cell.current { background:var(--current-m);color:#fff }
 
-.release-row { display:grid;border-bottom:1px solid var(--border-2) }
+/* ── Release band header ────────────────────────────────────────────────────── */
+.gantt-release-header {
+  display:grid;
+  grid-template-columns: var(--label-w) repeat(12, 1fr);
+  border-bottom:1px solid var(--border-2);
+  min-width:900px;
+}
 .release-cell {
   padding:3px 6px;text-align:center;font-size:10px;font-weight:600;
   font-family:var(--font-body);border-right:1px solid var(--border-2);
-  text-transform:uppercase;letter-spacing:.04em;
+  text-transform:uppercase;letter-spacing:.04em;color:inherit;
+}
+.release-cell-label { background:var(--bg-2) }
+
+/* ── vis-timeline overrides ──────────────────────────────────────────────────── */
+#gantt { min-width:900px; user-select:none }
+
+/* Container */
+.vis-timeline { border:none !important; font-family:var(--font-body) !important; background:var(--bg) !important; }
+
+/* Left label panel */
+.vis-panel.vis-left {
+  min-width:var(--label-w) !important;
+  max-width:var(--label-w) !important;
+  border-right:1px solid var(--border-2) !important;
+  overflow:hidden;
+  position:relative !important;
 }
 
-.ws-section { border-bottom:1px solid var(--border) }
-.ws-header {
-  display:flex;align-items:center;gap:6px;padding:6px 8px;
-  height:38px;background:var(--bg-2);border-bottom:1px solid var(--border-2);
-  position:sticky;left:0;
+/* Label resize handle */
+.vis-panel.vis-left .label-col-resizer {
+  position:absolute;top:0;right:0;bottom:0;width:6px;
+  cursor:col-resize;z-index:10;
+}
+.vis-panel.vis-left .label-col-resizer::after {
+  content:'';position:absolute;top:20%;right:1px;bottom:20%;
+  width:2px;border-radius:1px;background:var(--border);opacity:0;transition:opacity .15s;
+}
+.vis-panel.vis-left:hover .label-col-resizer::after { opacity:1 }
+
+/* Group label rows */
+.vis-labelset .vis-label {
+  border-bottom:1px solid var(--border-2) !important;
+  background:var(--bg-2) !important;
+  padding:0 !important;
+}
+.vis-labelset .vis-label .vis-inner { padding:0 !important; width:100% !important; }
+
+/* Top panel / time axis */
+.vis-panel.vis-top { border-bottom:1px solid var(--border-2) !important; background:var(--bg-2) !important; }
+.vis-time-axis { background:var(--bg-2) !important; }
+.vis-time-axis .vis-text {
+  font-family:var(--font-body) !important;
+  font-size:10px !important;
+  font-weight:500 !important;
+  color:var(--text-2) !important;
+  text-transform:uppercase !important;
+  letter-spacing:.04em !important;
+  padding:5px 2px !important;
+}
+.vis-time-axis .vis-text.vis-major { display:none !important; }
+
+/* Grid lines */
+.vis-panel.vis-center { border-left:none !important; }
+.vis-grid.vis-minor { border-left-color:var(--border-2) !important; }
+.vis-grid.vis-major { display:none !important; }
+
+/* Feature bars */
+.vis-item.vis-range {
+  border-radius:4px !important;
+  border:none !important;
+  font-family:var(--font-body) !important;
+  font-size:10px !important;
+  font-weight:500 !important;
+  cursor:grab !important;
+  transition:filter .1s !important;
+  box-shadow:none !important;
+}
+.vis-item.vis-range:hover { filter:brightness(1.06) !important; }
+.vis-item.vis-range.vis-selected {
+  border:none !important;
+  outline:2px solid var(--accent-2) !important;
+  outline-offset:1px !important;
+  box-shadow:none !important;
+}
+.vis-item .vis-item-content {
+  font-family:var(--font-body) !important;
+  padding:0 8px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.vis-item .vis-item-handle {
+  background:transparent !important;
+  border:none !important;
+  width:8px !important;
+  cursor:ew-resize !important;
+}
+
+/* Background bands */
+.vis-item.vis-background { z-index:0 !important; cursor:default !important; border:none !important; }
+.vis-item.vis-background.vis-current-month {
+  background:rgba(57,39,255,.07) !important;
+}
+
+/* Row background */
+.vis-panel.vis-center .vis-group:nth-child(even) { background:rgba(0,0,0,.012) }
+
+/* Workstream header inside vis group label */
+.vis-ws-header {
+  display:flex;align-items:center;gap:6px;
+  padding:6px 8px;height:38px;width:100%;box-sizing:border-box;
 }
 .ws-dot { width:9px;height:9px;border-radius:50%;flex-shrink:0 }
 .ws-name {
   font-weight:600;font-size:12px;color:var(--text);
   letter-spacing:-.01em;font-family:var(--font-body);
+  flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.ws-actions { margin-left:auto;display:flex;gap:4px }
+.ws-actions { display:flex;gap:4px;flex-shrink:0 }
 .ws-actions button {
   font-size:10px;padding:2px 7px;
   border:1px solid var(--border-2);border-radius:var(--radius);
@@ -148,41 +242,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 }
 .ws-actions button:hover { background:var(--bg-3);color:var(--text) }
 
-.feature-row { display:grid;align-items:center;min-height:36px;border-bottom:1px solid var(--border-2) }
-.feature-row:hover { background:var(--bg-2) }
-.feature-row.dragging-over { background:rgba(57,39,255,.06);opacity:.8 }
-
-.feature-label {
-  padding:0 8px;font-size:11px;font-weight:500;font-family:var(--font-body);
-  color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  cursor:default;display:flex;align-items:center;gap:4px;
-}
-.feature-label .drag-handle { cursor:grab;color:var(--text-3);font-size:13px }
-.feature-label span:not(.drag-handle):hover { color:var(--accent-2) }
-
-.cell { border-right:1px solid var(--border-2);height:100%;min-height:36px;position:relative;cursor:pointer }
-.cell.alt { background:rgba(0,0,0,.012) }
-
-.bar {
-  position:absolute;top:6px;bottom:6px;border-radius:4px;
-  display:flex;align-items:center;padding:0 8px;
-  font-size:10px;font-weight:500;font-family:var(--font-body);
-  white-space:nowrap;overflow:hidden;cursor:grab;
-  transition:filter .1s, opacity .1s;
-}
-.bar:hover { filter:brightness(1.05) }
-.bar .bar-resize-l,.bar .bar-resize-r {
-  position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize;z-index:2;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;
-  opacity:.5;
-}
-.bar:hover .bar-resize-l,.bar:hover .bar-resize-r { opacity:1 }
-.bar .bar-resize-l { left:2px }
-.bar .bar-resize-r { right:2px }
-.bar .grip-dot { width:3px;height:3px;border-radius:50%;background:currentColor }
-
-body.is-dragging { cursor:grabbing }
-body.is-dragging .bar, body.is-dragging .bar * { pointer-events:none }
+body.is-dragging { cursor:grabbing !important }
 
 /* ── Legend ─────────────────────────────────────────────────────────────────── */
 .legend {
@@ -394,21 +454,11 @@ body.is-dragging .bar, body.is-dragging .bar * { pointer-events:none }
 .ws-collapse-btn:hover { background:var(--bg-3);color:var(--text) }
 .ws-collapse-btn.collapsed { transform:rotate(-90deg) }
 
-/* ── Label column resizer ────────────────────────────────────────────────────── */
-.label-col-header { position:relative; overflow:visible !important }
-.label-col-resizer {
-  position:absolute;top:0;right:0;bottom:0;width:6px;
-  cursor:col-resize;z-index:3;
-}
-.label-col-resizer::after {
-  content:'';position:absolute;top:20%;right:1px;bottom:20%;
-  width:2px;border-radius:1px;background:var(--border);opacity:0;transition:opacity .15s;
-}
-.label-col-header:hover .label-col-resizer::after { opacity:1 }
 
 /* ── Row density ─────────────────────────────────────────────────────────────── */
-.gantt.compact .feature-row { min-height:28px }
-.gantt.compact .bar { top:4px;bottom:4px }
+#gantt.compact .vis-item.vis-range { height:20px !important; line-height:20px !important; }
+#gantt.compact .vis-labelset .vis-label { min-height:30px !important; }
+#gantt.compact .vis-ws-header { height:30px !important; }
 
 /* ── Inline workstream rename ────────────────────────────────────────────────── */
 .ws-name-inline {
